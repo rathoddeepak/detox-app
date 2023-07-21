@@ -3,22 +3,32 @@
 import React, {Component} from 'react';
 
 //React Native Components
-import {View, StyleSheet, Text} from 'react-native';
+import {
+	View,
+	StyleSheet,
+	FlatList,
+	Animated,
+	Text,
+	TouchableOpacity,
+} from 'react-native';
 
 //Custom Components
+import Diri from 'components/diri';
 import ProgressBar from 'components/ProgressBar';
 import CallButton from 'components/CallButton';
 import FrequentApps from 'components/FrequentApps';
-
 //Helper Constants
 import helper from 'utils/helper';
 import themes from 'themes';
 import moment from 'moment';
 import QuoteBackend from 'backend/qoute';
+import TodoDB from 'db/todo';
 
 const progressWidth = helper.width * 0.35;
 const defaultQuote = 'Not Stopping here...';
 const defaultAuthor = 'Deepak Rathod';
+const itemSize = 80;
+const containerSize = 120;
 
 class FocusHolder extends Component {
 	constructor(props) {
@@ -27,6 +37,8 @@ class FocusHolder extends Component {
 			dayProgress: 0,
 			qoute: defaultQuote,
 			qouteAuhtor: defaultAuthor,
+			tasks: [],
+			scrollY: new Animated.Value(1),
 		};
 		this.navigationFocus = null;
 		this.navigationBlur = null;
@@ -37,8 +49,20 @@ class FocusHolder extends Component {
 		// this.navigationFocus = navigation.addListener('focus', () => {
 		helper.addTimelistener(this.handleTimeChnage);
 		// });
-		this.loadQuote();
+		this.reset();
 	}
+
+	reset = () => {
+		const tasks = TodoDB.getAll();
+		this.setState({
+			tasks,
+		});
+	};
+
+	remove = idx => {
+		TodoDB.removeTask(idx);
+		this.reset();
+	};
 
 	loadQuote = async () => {
 		this.setState({qoute: defaultQuote, qouteAuthor: defaultAuthor});
@@ -94,6 +118,49 @@ class FocusHolder extends Component {
 		this.setState(newState);
 	};
 
+	renderTasks = ({item: task, index}) => {
+		const {scrollY} = this.state;
+		const startPosition = index * itemSize;
+		const pos1 = startPosition - containerSize;
+		const pos2 = startPosition + itemSize - containerSize;
+
+		const inputRange = [pos1, pos2];
+		const scale = scrollY.interpolate({
+			inputRange,
+			outputRange: [0.8, 1],
+			extrapolate: 'clamp',
+		});
+		const opacity = scrollY.interpolate({
+			inputRange: inputRange,
+			outputRange: [0, 1],
+			extrapolate: 'clamp',
+		});
+		return (
+			<Animated.View
+				onLongPress={() => this.remove(index)}
+				key={index}
+				activeOpacity={1}
+				style={[
+					styles.task,
+					{
+						transform: [
+							{
+								scale,
+							},
+						],
+						opacity,
+					},
+				]}>
+				<TouchableOpacity
+					activeOpacity={1}
+					style={styles.tk}
+					onLongPress={() => this.remove(index)}>
+					<Text style={styles.qoute}>{task}</Text>
+				</TouchableOpacity>
+			</Animated.View>
+		);
+	};
+
 	render() {
 		const {
 			currentTime,
@@ -102,8 +169,8 @@ class FocusHolder extends Component {
 			dayProgress,
 			daysLeftText,
 			minutesLeftText,
-			qoute,
-			qouteAuthor,
+			tasks,
+			scrollY,
 		} = this.state;
 		return (
 			<View style={styles.main}>
@@ -121,14 +188,26 @@ class FocusHolder extends Component {
 					</Text>
 					<ProgressBar top={5} progress={dayProgress} width={progressWidth} />
 
-					<View style={styles.qouteCover}>
+					{/*<View style={styles.qouteCover}>
 						<Text onPress={this.loadQuote} style={styles.qoute}>
 							{qoute} <Text style={styles.qouteAuthor}>- {qouteAuthor}</Text>
 						</Text>
+					</View>*/}
+					<View style={styles.list}>
+						<View style={styles.qouteCover}>
+							<Animated.FlatList
+								onScroll={Animated.event(
+									[{nativeEvent: {contentOffset: {y: scrollY}}}],
+									{useNativeDriver: true},
+								)}
+								showsVerticalScrollIndicator={false}
+								keyExtractor={item => item.key}
+								renderItem={this.renderTasks}
+								data={tasks}
+							/>
+						</View>
 					</View>
-
-					<CallButton right={20} bottom={30} />
-					<FrequentApps left={20} bottom={30} />
+					<Diri />
 				</View>
 			</View>
 		);
@@ -159,17 +238,32 @@ const styles = StyleSheet.create({
 		fontSize: themes.fontSize.h42,
 		marginTop: 20,
 	},
+	list: {flex: 1, justifyContent: 'center'},
 	qouteCover: {
-		flex: 1,
+		height: 120,
+		justifyContent: 'center',
+		marginTop: 20,
+		width: '100%',
+	},
+	task: {
+		backgroundColor: '#262D34',
+		height: 80,
+		marginBottom: 10,
+		borderRadius: 10,
+		padding: 10,
+		width: '93%',
+		alignSelf: 'center',
 		justifyContent: 'center',
 		alignItems: 'center',
+		borderWidth: 1,
+		borderColor: themes.colors.borderColor,
 	},
 	qoute: {
 		fontFamily: 'times',
 		color: themes.colors.borderColor,
-		fontSize: themes.fontSize.h3,
+		fontSize: 15,
+		width: '100%',
 		textAlign: 'center',
-		width: '90%',
 	},
 	qouteAuthor: {
 		fontSize: themes.fontSize.h4,

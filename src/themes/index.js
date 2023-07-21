@@ -1,13 +1,27 @@
 import phone from './iconAssets/phone.png';
 import app from './iconAssets/app.png';
+import todo from './iconAssets/todo.png';
+import browser from './iconAssets/chrome.png';
+import tube from './iconAssets/tube.png';
+import paytm from './iconAssets/paytm.png';
+import phonepe from './iconAssets/phonepe.png';
+import music from './iconAssets/music.png';
+import chat from './iconAssets/chat.png';
 export const icons = {
 	phone,
 	app,
+	todo,
+	browser,
+	tube,
+	music,
+	paytm,
+	phonepe,
+	chat
 };
 
 const pureBlack = '#000000';
 const pureWhite = '#ffffff';
-const background = pureBlack;
+const background = '#191E22';
 const textColor = pureWhite;
 const lightF2 = '#242424';
 const borderColor = '#c7c7c7';

@@ -222,4 +222,28 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
     }
   }
 
+  @ReactMethod
+  public void hideNotificationTray(final Promise promise) {
+    try {
+      Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+      this.reactContext.sendBroadcast(closeIntent);
+      String actionText = "Completed";
+      promise.resolve(actionText);
+    } catch (Exception e) {
+      promise.reject(e.getMessage());
+    }
+  }
+
+  @ReactMethod
+  public void turnOff(final Promise promise) {
+    try {      
+      Intent intent = new Intent("android.intent.action.ACTION_REQUEST_SHUTDOWN");                
+      intent.putExtra("android.intent.extra.KEY_CONFIRM", false);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      this.reactContext.startActivity(intent);
+      promise.resolve(true);
+    } catch (Exception e) {
+      promise.reject(e.getMessage());
+    }
+  }
 }

@@ -127,6 +127,9 @@ class AppItem extends Component {
 	};
 
 	openApp = packageName => {
+		if (packageName === 'com.google.android.youtube') {
+			packageName = 'com.github.libretube';
+		}
 		AppManager.startAppByPackageName(packageName);
 	};
 
