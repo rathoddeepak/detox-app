@@ -61,7 +61,7 @@ export default class Home extends Component {
 			AppState.addEventListener('focus', () => {
 				clearInterval(this.sleepTimer);
 				const beforeTime = moment('23:00', 'HH:mm');
-				const afterTime = moment('06:00', 'HH:mm');
+				const afterTime = moment(beforeTime).add(7, 'hours');
 				const time = moment();
 				let sleepingTime = false;
 				if (time.isSameOrAfter(beforeTime) && time.isSameOrBefore(afterTime)) {

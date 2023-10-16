@@ -6,7 +6,8 @@ import React, {Component} from 'react';
 import {
 	View,
 	StyleSheet,
-	FlatList,
+	Modal,
+	Image,
 	Animated,
 	Text,
 	TouchableOpacity,
@@ -17,13 +18,14 @@ import Diri from 'components/diri';
 import ProgressBar from 'components/ProgressBar';
 import CallButton from 'components/CallButton';
 import FrequentApps from 'components/FrequentApps';
+import Reveal from './reveal';
 //Helper Constants
 import helper from 'utils/helper';
 import themes from 'themes';
 import moment from 'moment';
 import QuoteBackend from 'backend/qoute';
 import TodoDB from 'db/todo';
-
+import {captureScreen} from 'react-native-view-shot';
 const progressWidth = helper.width * 0.35;
 const defaultQuote = 'Not Stopping here...';
 const defaultAuthor = 'Deepak Rathod';
@@ -39,6 +41,8 @@ class FocusHolder extends Component {
 			qouteAuhtor: defaultAuthor,
 			tasks: [],
 			scrollY: new Animated.Value(1),
+			showImage: false,
+			animatedWidth: new Animated.Value(helper.width),
 		};
 		this.navigationFocus = null;
 		this.navigationBlur = null;
@@ -161,6 +165,36 @@ class FocusHolder extends Component {
 		);
 	};
 
+	takeShot = () => {
+		this.state.animatedWidth.setValue(helper.width);
+		captureScreen({}).then(
+			uri => {
+				this.setState({currentImage: uri, showImage: true}, () => {
+					setTimeout(() => {
+						this.setState(
+							{
+								darkTheme: !this.state.darkTheme,
+							},
+							() => {
+								Animated.timing(this.state.animatedWidth, {
+									timing: 400,
+									toValue: 0,
+									useNativeDriver: false,
+								}).start();
+								setTimeout(() => {
+									this.setState({
+										showImage: false,
+									});
+								}, 500);
+							},
+						);
+					}, 50);
+				});
+			},
+			error => console.error('Oops, snapshot failed', error),
+		);
+	};
+
 	render() {
 		const {
 			currentTime,
@@ -171,9 +205,14 @@ class FocusHolder extends Component {
 			minutesLeftText,
 			tasks,
 			scrollY,
+			showImage,
+			currentImage,
+			darkTheme,
+			animatedWidth,
 		} = this.state;
+		const backgroundColor = '#000';
 		return (
-			<View style={styles.main}>
+			<View style={[styles.main, {backgroundColor}]}>
 				<View style={styles.content}>
 					<Text style={styles.timeText}>{currentTime}</Text>
 					<Text style={styles.dayText}>{currentDay}</Text>
@@ -209,6 +248,27 @@ class FocusHolder extends Component {
 					</View>
 					<Diri />
 				</View>
+
+				<Modal transparent visible={showImage}>
+					<Animated.View
+						style={{
+							width: animatedWidth,
+							height: helper.height - 5,
+							overflow: 'hidden',
+						}}
+						reveal
+						revealPositionArray={{bottom: true, left: true}}>
+						<Image
+							fadeDuration={0}
+							style={{
+								width: helper.width,
+								position: 'absolute',
+								height: helper.height - 5,
+							}}
+							source={{uri: currentImage}}
+						/>
+					</Animated.View>
+				</Modal>
 			</View>
 		);
 	}
