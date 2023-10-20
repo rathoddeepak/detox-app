@@ -21,7 +21,7 @@ export const icons = {
 
 const pureBlack = '#000000';
 const pureWhite = '#ffffff';
-const background = '#191E22';
+const background = '#0A0B1E';
 const textColor = pureWhite;
 const lightF2 = '#242424';
 const borderColor = '#c7c7c7';

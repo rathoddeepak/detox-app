@@ -95,6 +95,7 @@ const style = {
 	main: {
 		backgroundColor: '#000000',
 		flex: 1,
+		paddingTop: 25,
 	},
 	header: {
 		alignItems: 'center',

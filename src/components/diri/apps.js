@@ -10,11 +10,6 @@ class Apps extends Component {
 		this.state = {
 			appList: [
 				{
-					appName: 'Browser',
-					packageName: 'com.android.chrome',
-					icon: icons.browser,
-				},
-				{
 					appName: 'Tube',
 					packageName: 'com.github.libretube',
 					icon: icons.tube,
@@ -35,8 +30,13 @@ class Apps extends Component {
 					icon: icons.phonepe,
 				},
 				{
-					appName: 'Signal',
-					packageName: 'org.thoughtcrime.securesms',
+					appName: 'GWA',
+					packageName: 'com.gbwhatsapp',
+					icon: icons.chat,
+				},
+				{
+					appName: 'Whatsapp',
+					packageName: 'com.whatsapp',
 					icon: icons.chat,
 				},
 			],
@@ -101,12 +101,11 @@ class Apps extends Component {
 
 const styles = {
 	modal: {
-		backgroundColor: colors.backgroundB4,
 		height: helper.height,
 		width: helper.width,
 	},
 	content: {
-		paddingBottom: 20,
+		paddingBottom: 30,
 		borderTopLeftRadius: 10,
 		borderTopRightRadius: 10,
 		backgroundColor: colors.lightF2,

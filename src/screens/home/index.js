@@ -70,7 +70,6 @@ export default class Home extends Component {
 				this.setState({
 					sleepingTime,
 				});
-				this.focusHolder?.reset();
 			});
 			BackHandler.addEventListener('hardwareBackPress', () => true);
 		} catch (err) {
@@ -95,10 +94,7 @@ export default class Home extends Component {
 						disableIntervalMomentum={true}
 						snapToInterval={helper.width}>
 						<UtilityHolder nav={navigation} />
-						<FocusHolder
-							ref={ref => (this.focusHolder = ref)}
-							nav={navigation}
-						/>
+						<FocusHolder nav={navigation} />
 						<AppHolder nav={navigation} />
 					</ScrollView>
 				)}

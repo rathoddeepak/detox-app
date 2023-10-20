@@ -106,6 +106,7 @@ export default class LeetCode extends Component {
 					style={styles.pie}
 					accessor="count"
 					chartConfig={{
+						background: themes.colors.background,
 						color: (opacity = 1) => themes.colors.textColor,
 						labelColor: (opacity = 1) => themes.colors.textColor,
 					}}
@@ -133,6 +134,7 @@ export default class LeetCode extends Component {
 	render() {
 		return (
 			<ScrollView
+				showsVerticalScrollIndicator={false}
 				refreshControl={
 					<RefreshControl refreshing={false} onRefresh={this.refresh} />
 				}>
@@ -141,6 +143,8 @@ export default class LeetCode extends Component {
 					<Text style={styles.subTitle}>Track LeetCode Stats</Text>
 					{this.state.submissions.length > 0 ? this.renderData() : null}
 					{this.state.calendar.length > 0 ? this.renderCalendar() : null}
+
+					{this.props.footerComponent()}
 				</View>
 			</ScrollView>
 		);

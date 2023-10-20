@@ -16,22 +16,19 @@ import {
 //Custom Components
 import Diri from 'components/diri';
 import ProgressBar from 'components/ProgressBar';
-import CallButton from 'components/CallButton';
-import FrequentApps from 'components/FrequentApps';
-import Reveal from './reveal';
 //Helper Constants
 import helper from 'utils/helper';
 import themes from 'themes';
 import moment from 'moment';
 import QuoteBackend from 'backend/qoute';
-import TodoDB from 'db/todo';
-import {captureScreen} from 'react-native-view-shot';
+
 const progressWidth = helper.width * 0.35;
 const defaultQuote = 'Not Stopping here...';
 const defaultAuthor = 'Deepak Rathod';
 const itemSize = 80;
 const containerSize = 120;
 
+const imageHeight =  helper.width / 1.7756097561;
 class FocusHolder extends Component {
 	constructor(props) {
 		super(props);
@@ -49,24 +46,11 @@ class FocusHolder extends Component {
 	}
 
 	componentDidMount() {
-		const navigation = this.props.nav;
+		// const navigation = this.props.nav;
 		// this.navigationFocus = navigation.addListener('focus', () => {
 		helper.addTimelistener(this.handleTimeChnage);
 		// });
-		this.reset();
 	}
-
-	reset = () => {
-		const tasks = TodoDB.getAll();
-		this.setState({
-			tasks,
-		});
-	};
-
-	remove = idx => {
-		TodoDB.removeTask(idx);
-		this.reset();
-	};
 
 	loadQuote = async () => {
 		this.setState({qoute: defaultQuote, qouteAuthor: defaultAuthor});
@@ -165,36 +149,6 @@ class FocusHolder extends Component {
 		);
 	};
 
-	takeShot = () => {
-		this.state.animatedWidth.setValue(helper.width);
-		captureScreen({}).then(
-			uri => {
-				this.setState({currentImage: uri, showImage: true}, () => {
-					setTimeout(() => {
-						this.setState(
-							{
-								darkTheme: !this.state.darkTheme,
-							},
-							() => {
-								Animated.timing(this.state.animatedWidth, {
-									timing: 400,
-									toValue: 0,
-									useNativeDriver: false,
-								}).start();
-								setTimeout(() => {
-									this.setState({
-										showImage: false,
-									});
-								}, 500);
-							},
-						);
-					}, 50);
-				});
-			},
-			error => console.error('Oops, snapshot failed', error),
-		);
-	};
-
 	render() {
 		const {
 			currentTime,
@@ -203,16 +157,21 @@ class FocusHolder extends Component {
 			dayProgress,
 			daysLeftText,
 			minutesLeftText,
-			tasks,
-			scrollY,
-			showImage,
 			currentImage,
-			darkTheme,
+			daysLeftCount,
 			animatedWidth,
 		} = this.state;
-		const backgroundColor = '#000';
 		return (
-			<View style={[styles.main, {backgroundColor}]}>
+			<View style={[styles.main, {backgroundColor: themes.colors.background }]}>
+				<View style={styles.headerCover}>
+					<Image
+						resizeMode="contain"
+						style={styles.headerImage}
+						source={{
+							uri: 'https://c4.wallpaperflare.com/wallpaper/778/639/660/animals-firewatch-forest-minimalism-wallpaper-preview.jpg',
+						}}
+					/>
+				</View>
 				<View style={styles.content}>
 					<Text style={styles.timeText}>{currentTime}</Text>
 					<Text style={styles.dayText}>{currentDay}</Text>
@@ -234,41 +193,11 @@ class FocusHolder extends Component {
 					</View>*/}
 					<View style={styles.list}>
 						<View style={styles.qouteCover}>
-							<Animated.FlatList
-								onScroll={Animated.event(
-									[{nativeEvent: {contentOffset: {y: scrollY}}}],
-									{useNativeDriver: true},
-								)}
-								showsVerticalScrollIndicator={false}
-								keyExtractor={item => item.key}
-								renderItem={this.renderTasks}
-								data={tasks}
-							/>
+							<Text style={styles.daysLeft}>{daysLeftCount}</Text>
 						</View>
 					</View>
 					<Diri />
 				</View>
-
-				<Modal transparent visible={showImage}>
-					<Animated.View
-						style={{
-							width: animatedWidth,
-							height: helper.height - 5,
-							overflow: 'hidden',
-						}}
-						reveal
-						revealPositionArray={{bottom: true, left: true}}>
-						<Image
-							fadeDuration={0}
-							style={{
-								width: helper.width,
-								position: 'absolute',
-								height: helper.height - 5,
-							}}
-							source={{uri: currentImage}}
-						/>
-					</Animated.View>
-				</Modal>
 			</View>
 		);
 	}
@@ -327,6 +256,14 @@ const styles = StyleSheet.create({
 	},
 	qouteAuthor: {
 		fontSize: themes.fontSize.h4,
+	},
+	headerCover: {
+		height: imageHeight,
+		width: '100%',
+	},
+	headerImage: {
+		height: imageHeight,
+		width: '100%',
 	},
 });
 

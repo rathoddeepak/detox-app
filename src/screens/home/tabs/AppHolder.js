@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
 	main: {
 		height: helper.height,
 		width: helper.width,
+		paddingTop: 25,
 	},
 	content: {
 		padding: '5%',

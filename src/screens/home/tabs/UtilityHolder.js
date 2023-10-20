@@ -33,17 +33,45 @@ class UtilityHolder extends Component {
 		this.props.nav.navigate('SabkaCollege');
 	};
 
-	render() {
-		const {showImage, animatedWidth, currentImage} = this.state;
-		const backgroundColor = '#000000';
-		return (
-			<View style={[styles.main, {backgroundColor}]}>
-				<View style={styles.content}>
-					<LeetCode />
+	viewThaught = thought => {
+		this.props.nav.navigate('Thought', {
+			thought,
+		});
+	};
+
+	renderFooter = () => {
+		return (<>
+			<Pressable
+						onPress={() => this.viewThaught('cr')}
+						style={styles.sabkaHolder}>
+						<Text style={styles.sabkaText}>Energy</Text>
+					</Pressable>
+
+					<Pressable
+						onPress={() => this.viewThaught('cm')}
+						style={styles.sabkaHolder}>
+						<Text style={styles.sabkaText}>Mind</Text>
+					</Pressable>
+
+					<Pressable
+						onPress={() => this.viewThaught('of')}
+						style={styles.sabkaHolder}>
+						<Text style={styles.sabkaText}>Target</Text>
+					</Pressable>
 
 					<Pressable onPress={this.showSabkaContent} style={styles.sabkaHolder}>
 						<Text style={styles.sabkaText}>Sabka College</Text>
 					</Pressable>
+
+		</>)
+	}
+
+	render() {
+		const {showImage, animatedWidth, currentImage} = this.state;
+		return (
+			<View style={styles.main}>
+				<View style={styles.content}>
+					<LeetCode footerComponent={this.renderFooter} />
 				</View>
 			</View>
 		);
@@ -58,6 +86,7 @@ const styles = StyleSheet.create({
 	content: {
 		padding: '5%',
 		flex: 1,
+		marginTop: 30,
 	},
 	sabkaHolder: {
 		height: 50,

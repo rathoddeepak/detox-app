@@ -1,4 +1,4 @@
-import {Dimensions} from 'react-native';
+import {Dimensions, StatusBar} from 'react-native';
 import moment from 'moment';
 
 let currentListener = null;
@@ -26,11 +26,12 @@ const MINUTES_IN_A_DAY = 1440;
 const DAYS_IN_YEAR = 365;
 const MILLI_SEC_IN_MIN = 60000;
 const {width, height} = Dimensions.get('window');
+const screenHeight =  height + StatusBar.currentHeight;
 const helper = {
 	removeTimeListener,
 	addTimelistener,
 	width,
-	height,
+	height: screenHeight,
 
 	MINUTES_IN_A_DAY,
 	MILLI_SEC_IN_MIN,
