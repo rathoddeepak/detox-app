@@ -1,9 +1,20 @@
 import React, {useState, useMemo} from 'react';
 import {View, Pressable, Text, FlatList, ToastAndroid} from 'react-native';
-import courseData from './course.json';
 import {OrientationLocker, PORTRAIT} from 'react-native-orientation-locker';
-const ApnaCollege = ({navigation}) => {
+import webCourse from './web.json';
+import javaDSACourse from './course.json';
+
+const ApnaCollege = ({navigation, route}) => {
+	const courseTypeData = route.params;
+
+	const getCourseData = ({type}) => {
+		if (type === 'WEB') {
+			return webCourse;
+		}
+		return javaDSACourse;
+	};
 	const courses = useMemo(() => {
+		const courseData = getCourseData(courseTypeData);
 		const course = courseData.course;
 		const sectionMap = course.sections;
 		const sectionKeys = Object.keys(course.sections);
@@ -24,6 +35,7 @@ const ApnaCollege = ({navigation}) => {
 			return section;
 		});
 		return sections;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const [toggleMap, setToggleMap] = useState({});
 	const [resetList, setResetList] = useState(false);
@@ -73,7 +85,7 @@ const ApnaCollege = ({navigation}) => {
 								style={style.pathCover}>
 								<Text style={style.pathText}>{path.title}</Text>
 							</Pressable>
-							))
+					  ))
 					: null}
 			</View>
 		);
@@ -83,8 +95,12 @@ const ApnaCollege = ({navigation}) => {
 		<View style={style.main}>
 			<OrientationLocker orientation={PORTRAIT} />
 			<View style={style.header}>
-				<Text style={style.headerText}>Sabka College 3.0 | Java</Text>
-				<Text onPress={handleExit} style={style.closeText}>Exit</Text>
+				<Text style={style.headerText}>
+					Sabka College 3.0 | {courseTypeData.title}
+				</Text>
+				<Text onPress={handleExit} style={style.closeText}>
+					Exit
+				</Text>
 			</View>
 			<FlatList refresh={!resetList} renderItem={renderCard} data={courses} />
 		</View>

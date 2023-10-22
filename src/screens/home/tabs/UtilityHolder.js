@@ -29,8 +29,8 @@ class UtilityHolder extends Component {
 
 	handleTimeChnage = currentMoment => {};
 
-	showSabkaContent = () => {
-		this.props.nav.navigate('SabkaCollege');
+	showSabkaContent = content => {
+		this.props.nav.navigate('SabkaCollege', content);
 	};
 
 	viewThaught = thought => {
@@ -40,31 +40,44 @@ class UtilityHolder extends Component {
 	};
 
 	renderFooter = () => {
-		return (<>
-			<Pressable
-						onPress={() => this.viewThaught('cr')}
-						style={styles.sabkaHolder}>
-						<Text style={styles.sabkaText}>Energy</Text>
-					</Pressable>
+		return (
+			<>
+				<Pressable
+					onPress={() => this.viewThaught('cr')}
+					style={styles.sabkaHolder}>
+					<Text style={styles.sabkaText}>Energy</Text>
+				</Pressable>
 
-					<Pressable
-						onPress={() => this.viewThaught('cm')}
-						style={styles.sabkaHolder}>
-						<Text style={styles.sabkaText}>Mind</Text>
-					</Pressable>
+				<Pressable
+					onPress={() => this.viewThaught('cm')}
+					style={styles.sabkaHolder}>
+					<Text style={styles.sabkaText}>Mind</Text>
+				</Pressable>
 
-					<Pressable
-						onPress={() => this.viewThaught('of')}
-						style={styles.sabkaHolder}>
-						<Text style={styles.sabkaText}>Target</Text>
-					</Pressable>
+				<Pressable
+					onPress={() =>
+						this.showSabkaContent({
+							type: 'JAVA',
+							title: 'Java DSA',
+						})
+					}
+					style={styles.sabkaHolder}>
+					<Text style={styles.sabkaText}>Sabka College | JAVA</Text>
+				</Pressable>
 
-					<Pressable onPress={this.showSabkaContent} style={styles.sabkaHolder}>
-						<Text style={styles.sabkaText}>Sabka College</Text>
-					</Pressable>
-
-		</>)
-	}
+				<Pressable
+					onPress={() =>
+						this.showSabkaContent({
+							type: 'WEB',
+							title: 'Full Stack',
+						})
+					}
+					style={styles.sabkaHolder}>
+					<Text style={styles.sabkaText}>Sabka College | WEB</Text>
+				</Pressable>
+			</>
+		);
+	};
 
 	render() {
 		const {showImage, animatedWidth, currentImage} = this.state;
