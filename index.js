@@ -1,5 +1,5 @@
 /**
- * @format
+ * @format jabbar
  */
 
 import {AppRegistry} from 'react-native';
