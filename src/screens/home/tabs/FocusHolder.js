@@ -14,21 +14,21 @@ import {
 } from 'react-native';
 
 //Custom Components
-import Diri from 'components/diri';
 import ProgressBar from 'components/ProgressBar';
+import DateManager from 'components/DateManager';
+import UtilityManager from 'components/UtilityManager';
 //Helper Constants
 import helper from 'utils/helper';
 import themes from 'themes';
 import moment from 'moment';
 import QuoteBackend from 'backend/qoute';
 
-const progressWidth = helper.width * 0.35;
 const defaultQuote = 'Not Stopping here...';
 const defaultAuthor = 'Deepak Rathod';
 const itemSize = 80;
 const containerSize = 120;
 
-const imageHeight =  helper.width / 1.7756097561;
+const imageHeight = helper.width / 1.7756097561;
 class FocusHolder extends Component {
 	constructor(props) {
 		super(props);
@@ -36,20 +36,12 @@ class FocusHolder extends Component {
 			dayProgress: 0,
 			qoute: defaultQuote,
 			qouteAuhtor: defaultAuthor,
-			tasks: [],
 			scrollY: new Animated.Value(1),
 			showImage: false,
 			animatedWidth: new Animated.Value(helper.width),
 		};
 		this.navigationFocus = null;
 		this.navigationBlur = null;
-	}
-
-	componentDidMount() {
-		// const navigation = this.props.nav;
-		// this.navigationFocus = navigation.addListener('focus', () => {
-		helper.addTimelistener(this.handleTimeChnage);
-		// });
 	}
 
 	loadQuote = async () => {
@@ -63,104 +55,7 @@ class FocusHolder extends Component {
 		}
 	};
 
-	componentWillUnmount() {
-		helper.removeTimeListener();
-		if (this.navigationFocus) {
-			this.navigationFocus();
-		}
-		if (this.navigationBlur) {
-			this.navigationBlur();
-		}
-	}
-
-	handleTimeChnage = currentMoment => {
-		const currentTime = currentMoment.format('HH:mm');
-		const currentDay = currentMoment.format('dddd, DD MMM');
-		const nextDayStart = moment(currentMoment).add(1, 'days').startOf('day');
-		const nextYearStart = moment(currentMoment).add(1, 'year').startOf('year');
-
-		const minutesLeft = nextDayStart.diff(currentMoment, 'minutes');
-		const minutesProgress = helper.MINUTES_IN_A_DAY - minutesLeft;
-
-		const minutesReminder = Math.round(minutesLeft / 60);
-		const minutesLeftText = `${minutesReminder} Hrs ${Math.abs(
-			minutesLeft - minutesReminder * 60,
-		)} mins`;
-
-		const dayDiff = minutesProgress / helper.MINUTES_IN_A_DAY;
-
-		const daysInYear =
-			helper.DAYS_IN_YEAR + (currentMoment.isLeapYear() ? 1 : 0);
-
-		const daysLeft = nextYearStart.diff(currentMoment, 'days');
-		const daysProgress = daysInYear - daysLeft;
-		const yearDiff = daysProgress / daysInYear;
-		const newState = {
-			minutesLeftText,
-			daysLeftText: `${daysLeft} Days`,
-			currentTime,
-			currentDay,
-			dayProgress: Math.round(dayDiff * 100),
-			yearProgress: Math.round(yearDiff * 100),
-		};
-		this.setState(newState);
-	};
-
-	renderTasks = ({item: task, index}) => {
-		const {scrollY} = this.state;
-		const startPosition = index * itemSize;
-		const pos1 = startPosition - containerSize;
-		const pos2 = startPosition + itemSize - containerSize;
-
-		const inputRange = [pos1, pos2];
-		const scale = scrollY.interpolate({
-			inputRange,
-			outputRange: [0.8, 1],
-			extrapolate: 'clamp',
-		});
-		const opacity = scrollY.interpolate({
-			inputRange: inputRange,
-			outputRange: [0, 1],
-			extrapolate: 'clamp',
-		});
-		return (
-			<Animated.View
-				onLongPress={() => this.remove(index)}
-				key={index}
-				activeOpacity={1}
-				style={[
-					styles.task,
-					{
-						transform: [
-							{
-								scale,
-							},
-						],
-						opacity,
-					},
-				]}>
-				<TouchableOpacity
-					activeOpacity={1}
-					style={styles.tk}
-					onLongPress={() => this.remove(index)}>
-					<Text style={styles.qoute}>{task}</Text>
-				</TouchableOpacity>
-			</Animated.View>
-		);
-	};
-
 	render() {
-		const {
-			currentTime,
-			currentDay,
-			yearProgress,
-			dayProgress,
-			daysLeftText,
-			minutesLeftText,
-			currentImage,
-			daysLeftCount,
-			animatedWidth,
-		} = this.state;
 		return (
 			<View style={[styles.main, {backgroundColor: themes.colors.background }]}>
 				<View style={styles.headerCover}>
@@ -173,30 +68,8 @@ class FocusHolder extends Component {
 					/>
 				</View>
 				<View style={styles.content}>
-					<Text style={styles.timeText}>{currentTime}</Text>
-					<Text style={styles.dayText}>{currentDay}</Text>
-
-					<Text style={styles.progressText}>
-						Year In Progress {daysLeftText}
-					</Text>
-					<ProgressBar top={5} progress={yearProgress} width={progressWidth} />
-
-					<Text style={styles.progressText}>
-						Day In Progress {minutesLeftText}
-					</Text>
-					<ProgressBar top={5} progress={dayProgress} width={progressWidth} />
-
-					{/*<View style={styles.qouteCover}>
-						<Text onPress={this.loadQuote} style={styles.qoute}>
-							{qoute} <Text style={styles.qouteAuthor}>- {qouteAuthor}</Text>
-						</Text>
-					</View>*/}
-					<View style={styles.list}>
-						<View style={styles.qouteCover}>
-							<Text style={styles.daysLeft}>{daysLeftCount}</Text>
-						</View>
-					</View>
-					<Diri />
+					<DateManager />
+					<UtilityManager nav={this.props.nav} />					
 				</View>
 			</View>
 		);
@@ -205,27 +78,11 @@ class FocusHolder extends Component {
 
 const styles = StyleSheet.create({
 	main: {
-		height: helper.height,
-		width: helper.width,
+		flex: 1,
 	},
 	content: {
 		padding: '5%',
 		flex: 1,
-	},
-	timeText: {
-		color: themes.colors.textColor,
-		fontSize: themes.fontSize.h3,
-		fontFamily: themes.fontFamily.regular,
-	},
-	dayText: {
-		color: themes.colors.textColor,
-		fontSize: themes.fontSize.h5,
-		fontFamily: themes.fontFamily.regular,
-	},
-	progressText: {
-		color: themes.colors.textColor,
-		fontSize: themes.fontSize.h42,
-		marginTop: 20,
 	},
 	list: {flex: 1, justifyContent: 'center'},
 	qouteCover: {

@@ -11,6 +11,7 @@ import {
 	TextInput,
 	FlatList,
 	Modal,
+	Image,
 } from 'react-native';
 
 //Helper Constants
@@ -20,7 +21,7 @@ import themes from 'themes';
 import AppManager from 'libs/AppManager';
 import FrequentAppDB from 'db/FrequentApps';
 
-class AppHolder extends Component {
+class AppBar extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -75,28 +76,36 @@ class AppHolder extends Component {
 	render() {
 		const {appList} = this.state;
 		return (
-			<View style={styles.main}>
-				<View style={styles.content}>
-					<View style={styles.searchBar}>
-						<TextInput
-							placeholder="Search Apps"
-							onChangeText={this.handleSearch}
-							placeholderTextColor={themes.colors.borderColor}
-							style={styles.searchInput}
+			<Modal
+				statusBarTranslucent
+				transparent
+				onRequestClose={this.props.onClose}
+				animationType="slide"
+				visible={this.props.visible}>
+				<View style={styles.main}>
+					<View style={styles.content}>
+						<View style={styles.searchBar}>
+							<TextInput
+								placeholder="Search Apps"
+								onChangeText={this.handleSearch}
+								placeholderTextColor={themes.colors.borderColor}
+								style={styles.searchInput}
+							/>
+						</View>
+						<FlatList
+							refreshing={false}
+							data={appList}
+							numColumns={3}
+							onRefresh={this.reset}
+							keyExtractor={item => item.packageName}
+							renderItem={({item}) => (
+								<AppItem onOption={() => this.options.show(item)} data={item} />
+							)}
 						/>
 					</View>
-					<FlatList
-						refreshing={false}
-						data={appList}
-						onRefresh={this.reset}
-						keyExtractor={item => item.packageName}
-						renderItem={({item}) => (
-							<AppItem onOption={() => this.options.show(item)} data={item} />
-						)}
-					/>
+					<Options ref={ref => (this.options = ref)} />
 				</View>
-				<Options ref={ref => (this.options = ref)} />
-			</View>
+			</Modal>
 		);
 	}
 }
@@ -110,7 +119,7 @@ class AppItem extends Component {
 	}
 
 	componentDidMount() {
-		this.setStats();
+		// this.setStats();
 	}
 
 	setStats = async () => {
@@ -127,9 +136,6 @@ class AppItem extends Component {
 	};
 
 	openApp = packageName => {
-		if (packageName === 'com.google.android.youtube') {
-			packageName = 'com.github.libretube';
-		}
 		AppManager.startAppByPackageName(packageName);
 	};
 
@@ -141,6 +147,10 @@ class AppItem extends Component {
 				onLongPress={this.props.onOption}
 				onPress={() => this.openApp(data.packageName)}
 				style={styles.appCard}>
+				<Image
+					source={{uri: 'data:image/png;base64,' + data.icon}}
+					style={styles.appIcon}
+				/>
 				<Text style={styles.appName}>{data.appName} </Text>
 				{appUsage > 0 ? (
 					<Text style={styles.appUsage}>{appUsage} min</Text>
@@ -226,9 +236,10 @@ const styles = StyleSheet.create({
 		height: helper.height,
 		width: helper.width,
 		paddingTop: 25,
+		backgroundColor: themes.colors.backgroundB4,
 	},
 	content: {
-		padding: '5%',
+		padding: '4%',
 		flex: 1,
 	},
 	searchBar: {
@@ -245,16 +256,21 @@ const styles = StyleSheet.create({
 		fontFamily: themes.fontFamily.regular,
 	},
 	appCard: {
-		height: 40,
-		width: '98%',
-		alignSelf: 'center',
-		flexDirection: 'row',
+		height: 80,
+		marginTop: 10,
+		width: '32%',
 		alignItems: 'center',
-		justifyContent: 'space-between',
 	},
 	appName: {
-		fontSize: themes.fontSize.h4,
+		fontSize: themes.fontSize.h5,
 		color: themes.colors.textColor,
+		textAlign: 'center',
+		width: '100%',
+		marginTop: 5,
+	},
+	appIcon: {
+		height: 50,
+		width: 50,
 	},
 	appUsage: {
 		fontSize: themes.fontSize.h6,
@@ -304,4 +320,4 @@ const modalStyles = {
 	},
 };
 
-export default AppHolder;
+export default AppBar;

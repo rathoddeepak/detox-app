@@ -3,9 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 let todoList = [];
 const DB_KEY = '@TODO';
 
-const save = () => {
+const save = async () => {
 	const jsonValue = JSON.stringify(todoList);
-	AsyncStorage.setItem(DB_KEY, jsonValue);
+	await AsyncStorage.setItem(DB_KEY, jsonValue);
 };
 
 const getAll = () => {
@@ -17,9 +17,9 @@ const createTask = task => {
 	save();
 };
 
-const removeTask = idx => {
+const removeTask = async idx => {
 	todoList.splice(idx, 1);
-	save();
+	await save();
 };
 
 const init = async () => {

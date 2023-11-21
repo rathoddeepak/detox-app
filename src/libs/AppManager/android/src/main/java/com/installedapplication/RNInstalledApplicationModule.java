@@ -93,6 +93,8 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
       for (ResolveInfo resolveInfo : pList) {
         ApplicationInfo packageInfo = resolveInfo.activityInfo.applicationInfo;
         WritableMap appInfo = Arguments.createMap();        
+        Drawable icon = pm.getApplicationIcon(packageInfo);
+        appInfo.putString("icon", Utility.convert(icon));
         appInfo.putString("packageName", packageInfo.packageName);
         appInfo.putString("appName", ((String) packageInfo.loadLabel(pm)).trim());
         list.pushMap(appInfo);

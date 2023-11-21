@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
 	Animated,
 	View,
@@ -11,12 +11,12 @@ import themes from 'themes';
 import helper from 'utils/helper';
 import Apps from './apps';
 import AppManager from 'libs/AppManager';
-import TodoAdder from '../TodoAdder';
+import AppBar from '../AppBar';
 
 const apps = [
 	{top: -60, left: -90, icon: themes.icons.phone},
 	{top: -100, left: 0, icon: themes.icons.app},
-	{top: -60, left: 90, icon: themes.icons.todo},
+	{top: -60, left: 90, icon: themes.icons.msg},
 ];
 const halfWidth = helper.width / 2;
 const captureRegion = helper.height - 100;
@@ -35,7 +35,7 @@ const getIdx = (pageX, pageY) => {
 	return 1;
 };
 const Diri = () => {
-	const currentApps = useRef();
+	const [appListVisible, setAppListVisible] = useState(false);
 	const todoAdder = useRef();
 	const currentIdx = useRef(new Animated.Value(-1)).current;
 	const diriScale = useRef(new Animated.Value(1)).current;
@@ -139,11 +139,13 @@ const Diri = () => {
 
 	const openApp = idx => {
 		if (idx === 1) {
-			currentApps.current.show();
+			// currentApps.current.show();
+			setAppListVisible(true);
 		} else if (idx === 0) {
 			AppManager.startAppByPackageName('com.android.contacts');
 		} else if (idx === 2) {
-			todoAdder.current.show();
+			AppManager.startAppByPackageName('com.android.mms');
+			// todoAdder.current.show();
 		}
 	};
 
@@ -182,8 +184,11 @@ const Diri = () => {
 				{...panResponder.panHandlers}>
 				{apps.map(renderApps)}
 			</Animated.View>
-			<Apps ref={currentApps} />
-			<TodoAdder ref={todoAdder} />
+			{/*<Apps ref={currentApps} />*/}
+			<AppBar
+				onClose={() => setAppListVisible(false)}
+				visible={appListVisible}
+			/>
 		</View>
 	);
 };
@@ -192,6 +197,8 @@ const styles = StyleSheet.create({
 	container: {
 		height: 200,
 		width: 300,
+		position: 'absolute',
+		bottom: 0,
 		alignSelf: 'center',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -207,14 +214,14 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 		top: 40,
 		borderWidth: 5,
-		borderColor: themes.colors.borderColor,
+		borderColor: themes.colors.foreground,
 	},
 	button: {
 		borderRadius: 100,
 		height: 40,
 		width: 40,
 		position: 'absolute',
-		backgroundColor: themes.colors.borderColor,
+		backgroundColor: themes.colors.foreground,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

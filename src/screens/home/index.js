@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 //Custom Components
+import Diri from 'components/diri';
 import UtilityHolder from './tabs/UtilityHolder';
 import FocusHolder from './tabs/FocusHolder';
 import AppHolder from './tabs/AppHolder';
@@ -79,25 +80,15 @@ export default class Home extends Component {
 
 	render() {
 		const {navigation} = this.props;
-		const {sleepingTime} = this.state;
+		// const {sleepingTime} = this.state;
 		return (
 			<View style={styles.main}>
-				{sleepingTime ? (
-					<Sleeping />
-				) : (
-					<ScrollView
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						decelerationRate={0.9}
-						overScrollMode="never"
-						showsScrollIndicator={false}
-						disableIntervalMomentum={true}
-						snapToInterval={helper.width}>
-						<UtilityHolder nav={navigation} />
+				<View style={styles.content}>
+					<ScrollView showsVerticalScrollIndicator={false}>
 						<FocusHolder nav={navigation} />
-						<AppHolder nav={navigation} />
 					</ScrollView>
-				)}
+				</View>
+				<Diri />
 			</View>
 		);
 	}
@@ -109,4 +100,21 @@ const styles = StyleSheet.create({
 		width: helper.width,
 		backgroundColor: colors.background,
 	},
+	content: {
+		height: helper.height - 150,
+		width: helper.width,
+	},
 });
+
+/*<ScrollView
+	horizontal
+	showsHorizontalScrollIndicator={false}
+	decelerationRate={0.9}
+	overScrollMode="never"
+	showsScrollIndicator={false}
+	disableIntervalMomentum={true}
+	snapToInterval={helper.width}>
+	<UtilityHolder nav={navigation} />
+	<FocusHolder nav={navigation} />
+	<AppHolder nav={navigation} />
+</ScrollView>*/

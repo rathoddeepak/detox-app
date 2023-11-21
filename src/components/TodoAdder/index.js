@@ -38,6 +38,7 @@ export default class FrequentApps extends Component {
 				animationType="slide"
 				transparent
 				visible={v}
+				statusBarTranslucent
 				onRequestClose={this.handleClose}>
 				<TouchableOpacity
 					onPress={this.handleClose}
@@ -47,6 +48,7 @@ export default class FrequentApps extends Component {
 						<Text style={styles.title}>Add Task</Text>
 
 						<TextInput
+							selectionColor={colors.foregroundLight}
 							style={styles.input}
 							onChangeText={task => this.setState({task})}
 						/>
