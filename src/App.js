@@ -7,6 +7,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SabkaCollege from './screens/apnaCollege/';
 import SabkaPlayer from './screens/apnaCollege/player';
 import Thought from './screens/thoughts';
+import TimeUntil from './screens/timeuntil';
 import HomeScreen from 'screens/home';
 import themes from 'themes';
 
@@ -23,6 +24,7 @@ function App() {
 				<Stack.Screen name="Thought" component={Thought} />
 				<Stack.Screen name="SabkaCollege" component={SabkaCollege} />
 				<Stack.Screen name="SabkaPlayer" component={SabkaPlayer} />
+				<Stack.Screen name="TimeUntil" component={TimeUntil} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

@@ -30,7 +30,7 @@ const tabs = [
 		name: 'Calculator',
 	},
 	{
-		name: 'Content',
+		name: 'Other',
 	},
 ];
 class UtilityManager extends Component {
@@ -73,6 +73,10 @@ class UtilityManager extends Component {
 		this.props.nav.navigate('Thought', {
 			thought,
 		});
+	};
+
+	showTimer = () => {
+		this.props.nav.navigate('TimeUntil');
 	};
 
 	renderContent = () => {
@@ -123,6 +127,9 @@ class UtilityManager extends Component {
 							}>
 							<Text style={styles.rowTxt}>Sabka College | WEB</Text>
 						</Pressable>
+						<Pressable style={styles.rowItem} onPress={this.showTimer}>
+							<Text style={styles.rowTxt}>Time until</Text>
+						</Pressable>
 						<Pressable
 							style={styles.rowItem}
 							onPress={() => this.viewThaught('cr')}>
@@ -133,7 +140,7 @@ class UtilityManager extends Component {
 							onPress={() => this.viewThaught('cm')}>
 							<Text style={styles.rowTxt}>Mind</Text>
 						</Pressable>
-						<View style={{ height: 10 }} />
+						<View style={{height: 10}} />
 					</>
 				);
 		}
@@ -173,7 +180,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 	},
 	rowItem: {
-		height: 45
+		height: 45,
 	},
 	rowTxt: {
 		color: themes.colors.foreground,
